@@ -23,7 +23,7 @@ import {
 // Image Imports
 import darkBanner from "./assets/images/regenerated_image_1780961436854.png";
 import lightBanner from "./assets/images/user_volcano_banner_1780960794028.png";
-import backupLightBanner from "./assets/images/regenerated_image_1780961686910.jpg";
+import backupLightBanner from "./assets/images/regenerated_image_1780961340822.jpg";
 import profileAvatar from "./assets/images/user_avatar_1780960461329.png";
 
 export default function App() {
