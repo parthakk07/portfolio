@@ -38,6 +38,31 @@ export default function App() {
   // Safe Light Banner state with graceful fallback
   const [lightBannerSrc, setLightBannerSrc] = useState<string>(lightBanner);
 
+  // Avatar click counter for secret music popup
+  const [clickCount, setClickCount] = useState(0);
+  const [showMusicPopup, setShowMusicPopup] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleAvatarClick = () => {
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+    if (newCount >= 5) {
+      setShowMusicPopup(true);
+      setClickCount(0);
+    }
+  };
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   // Cloud cursor follower
   const cloudRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
@@ -200,8 +225,9 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
           
           {/* Circular Overlapping Profile Avatar */}
           <div className="absolute -bottom-16 left-6 md:left-12">
-            <motion.div 
-              className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden p-1 shadow-xl transition-colors duration-300 ${isDarkMode ? "bg-black" : "bg-gray-50"}`}
+            <motion.button 
+              onClick={handleAvatarClick}
+              className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden p-1 shadow-xl transition-colors duration-300 cursor-pointer ${isDarkMode ? "bg-black" : "bg-gray-50"}`}
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
@@ -211,7 +237,7 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover rounded-full"
               />
-            </motion.div>
+            </motion.button>
           </div>
         </section>
 
@@ -533,6 +559,67 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
           </motion.button>
         )}
       </AnimatePresence>
+
+    {/* MUSIC POPUP */}
+    {showMusicPopup && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        onClick={() => setShowMusicPopup(false)}
+      >
+        <div
+          className={`relative w-80 p-6 rounded-2xl shadow-2xl border transition-colors ${isDarkMode ? "bg-black border-neutral-800 text-white" : "bg-white border-gray-200 text-black"}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => { audioRef.current?.pause(); setIsPlaying(false); setShowMusicPopup(false); }}
+            className={`absolute top-3 right-3 text-sm cursor-pointer ${isDarkMode ? "text-neutral-500 hover:text-white" : "text-gray-400 hover:text-black"}`}
+          >
+            ✕
+          </button>
+
+          <h3 className="font-serif text-lg mb-4 tracking-wide">🎵 hidden track</h3>
+
+          <audio ref={audioRef} src="/hidden-track.mp3" loop />
+
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={togglePlay}
+              className={`px-5 py-2 rounded-full text-sm font-medium cursor-pointer transition-colors ${isDarkMode ? "bg-neutral-800 text-white hover:bg-neutral-700" : "bg-gray-100 text-black hover:bg-gray-200"}`}
+            >
+              {isPlaying ? "⏸ Pause" : "▶ Play"}
+            </button>
+            <span className="text-xs opacity-60">{isPlaying ? "playing..." : "paused"}</span>
+          </div>
+
+          <div className="border-t border-dashed mt-4 pt-4 space-y-3">
+            <a
+              href="https://music.youtube.com/playlist?list=PL2dARRFsLCBMdr9281IJbx7sH8kE8jMAP&si=4YnzQHX5QtbjGC56"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block text-sm hover:opacity-70 transition-opacity ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}
+            >
+              🎧 english playlist
+            </a>
+            <a
+              href="https://music.youtube.com/playlist?list=PLxlEmaYUUetvx7sW4CnTBQ7gg_CC4mJD_&si=ZDMUJa-mZpsnaFCV"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block text-sm hover:opacity-70 transition-opacity ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}
+            >
+              🎧 hindi playlist 1
+            </a>
+            <a
+              href="https://music.youtube.com/playlist?list=PLxlEmaYUUetunpiyrp4QXpqVIs4kWCbuu&si=uElVb5cikFSRC5LV"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block text-sm hover:opacity-70 transition-opacity ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}
+            >
+              🎧 hindi playlist 2
+            </a>
+          </div>
+        </div>
+      </div>
+    )}
 
     </div>
   );
