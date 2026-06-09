@@ -121,6 +121,18 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  // PARTHAK click counter for easter egg redirect
+  const [parthakClicks, setParthakClicks] = useState(0);
+
+  const handleParthakClick = () => {
+    const next = parthakClicks + 1;
+    setParthakClicks(next);
+    if (next >= 3) {
+      setParthakClicks(0);
+      window.open("https://superlative-dango-baf2ea.netlify.app/", "_blank");
+    }
+  };
+
   // Smooth Scroll offset helper
   const handleScrollTo = (id: string) => {
     if (id === "home") {
@@ -143,7 +155,7 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
         <div id="nav-container" className="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <div className="relative flex items-center">
             <button 
-              onClick={() => handleScrollTo("home")}
+              onClick={() => { handleScrollTo("home"); handleParthakClick(); }}
               className="font-serif text-base sm:text-xl font-bold tracking-widest hover:opacity-80 transition-opacity uppercase cursor-pointer flex items-center justify-center translate-y-[5px]"
             >
               PARTHAK
