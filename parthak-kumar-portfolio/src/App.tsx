@@ -25,6 +25,7 @@ import darkBanner from "./assets/images/regenerated_image_1780961436854.png";
 import lightBanner from "./assets/images/user_volcano_banner_1780960794028.png";
 import backupLightBanner from "./assets/images/regenerated_image_1780961340822.jpg";
 import profileAvatar from "./assets/images/user_avatar_1780960461329.png";
+import cursorCloud from "./assets/images/cursor-cloud.png";
 
 export default function App() {
   // Dark/Light mode state (default to dark)
@@ -36,6 +37,37 @@ export default function App() {
   
   // Safe Light Banner state with graceful fallback
   const [lightBannerSrc, setLightBannerSrc] = useState<string>(lightBanner);
+
+  // Cloud cursor follower
+  const cloudRef = useRef<HTMLDivElement>(null);
+  const mousePos = useRef({ x: 0, y: 0 });
+  const cloudPos = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const animate = () => {
+cloudPos.current.x += (mousePos.current.x - cloudPos.current.x) * 0.015;
+cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
+
+      if (cloudRef.current) {
+        cloudRef.current.style.transform = `translate(${cloudPos.current.x - 30}px, ${cloudPos.current.y - 20}px)`;
+      }
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   // Handle scroll top visibility
   useEffect(() => {
@@ -84,12 +116,21 @@ export default function App() {
       {/* HEADER NAVIGATION */}
       <header className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "bg-black/80 border-b border-neutral-900" : "bg-white/80 border-b border-gray-200"}`}>
         <div id="nav-container" className="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          <button 
-            onClick={() => handleScrollTo("home")}
-            className="font-serif text-base sm:text-xl font-bold tracking-widest hover:opacity-80 transition-opacity uppercase cursor-pointer flex items-center justify-center translate-y-[5px]"
-          >
-            PARTHAK
-          </button>
+          <div className="relative flex items-center">
+            <button 
+              onClick={() => handleScrollTo("home")}
+              className="font-serif text-base sm:text-xl font-bold tracking-widest hover:opacity-80 transition-opacity uppercase cursor-pointer flex items-center justify-center translate-y-[5px]"
+            >
+              PARTHAK
+            </button>
+            <div
+              ref={cloudRef}
+              className="pointer-events-none fixed z-50"
+              style={{ left: 0, top: 0 }}
+            >
+              <img src={cursorCloud} alt="" className="w-20 sm:w-24" />
+            </div>
+          </div>
 
           <nav className="flex items-center gap-3 sm:gap-6 md:gap-8 font-serif text-xs sm:text-sm tracking-wide lowercase translate-y-[5px]">
             <button 
