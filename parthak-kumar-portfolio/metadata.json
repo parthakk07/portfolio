@@ -1,0 +1,6 @@
+{
+  "name": "Parthak Kumar Portfolio",
+  "description": "A dark-themed personal portfolio website for Parthak Kumar featuring a volcanic banner, overlapping profile picture, elegant typography, tech stack showcase, custom dashed project cards, and a live AI chat assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
