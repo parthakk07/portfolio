@@ -17,6 +17,7 @@ import darkBanner from "./assets/images/regenerated_image_1780961436854.png";
 import lightBanner from "./assets/images/user_volcano_banner_1780960794028.png";
 import backupLightBanner from "./assets/images/regenerated_image_1780961340822.jpg";
 import profileAvatar from "./assets/images/user_avatar_1780960461329.png";
+import headerPortrait from "./assets/images/header-portrait.png";
 import cursorCloud from "./assets/images/cursor-cloud.png";
 
 const PixelGlobe = lazy(() => import("./components/PixelGlobe"));
@@ -217,20 +218,16 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
             />
             <div className="absolute inset-0 bg-black/15 pointer-events-none" />
           </div>
-          
-          {/* Globe home slot — invisible so nothing is left behind when thrown */}
-          <div className="absolute -bottom-16 left-6 md:left-12 w-32 h-32 md:w-36 md:h-36">
-            <Suspense
-              fallback={
-                <img
-                  src={profileAvatar}
-                  alt="Parthak Kumar Portrait"
-                  className="w-full h-full object-cover rounded-full"
-                />
-              }
+          <div className="absolute -bottom-16 left-6 md:left-12">
+            <div
+              className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden p-1 shadow-xl transition-colors duration-300 ${isDarkMode ? "bg-black" : "bg-gray-50"}`}
             >
-              <PixelGlobe onTap={handleAvatarClick} className="w-full h-full" />
-            </Suspense>
+              <img
+                src={headerPortrait}
+                alt="Parthak Kumar"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
           </div>
         </section>
 
@@ -488,9 +485,24 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
 
         {/* CONTACT / FOOTER SECTION */}
         <section id="contact" className="mt-28 py-12 border-t border-dashed border-neutral-800 dark:border-neutral-900">
-          <div className="flex flex-col gap-2">
-            <h3 className="font-serif text-lg text-neutral-400">Let's connect & get in touch!</h3>
-            <p className="font-serif text-xl tracking-wide dark:text-neutral-500 text-gray-500 font-medium">Find me on these platforms</p>
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex flex-col gap-2 min-w-0">
+              <h3 className="font-serif text-lg text-neutral-400">Let's connect & get in touch!</h3>
+              <p className="font-serif text-xl tracking-wide dark:text-neutral-500 text-gray-500 font-medium">Find me on these platforms</p>
+            </div>
+            <div className="relative w-32 h-32 md:w-36 md:h-36 shrink-0">
+              <Suspense
+                fallback={
+                  <img
+                    src={profileAvatar}
+                    alt="Parthak Kumar Portrait"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                }
+              >
+                <PixelGlobe onTap={handleAvatarClick} className="w-full h-full" />
+              </Suspense>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-6 mt-8 font-serif text-xs tracking-wider lowercase">

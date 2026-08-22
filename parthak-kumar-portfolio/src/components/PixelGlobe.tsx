@@ -158,14 +158,18 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
     });
 
     const readArena = () => {
-      const banner = document.getElementById("hero-banner");
-      const homeBox = home.getBoundingClientRect();
-      const b = banner ? banner.getBoundingClientRect() : homeBox;
+      const widthEl =
+        document.getElementById("hero-banner") ||
+        document.getElementById("contact") ||
+        home;
+      const b = widthEl.getBoundingClientRect();
       const pad = 2;
+      const nav = document.getElementById("site-header");
+      const top = (nav?.offsetHeight ?? 0) + pad;
       return {
         minX: b.left + scrollX() + body.r + pad,
         maxX: b.right + scrollX() - body.r - pad,
-        minY: b.top + scrollY() + body.r + pad,
+        minY: top + body.r + pad,
         maxY: document.documentElement.scrollHeight - body.r - pad,
       };
     };
