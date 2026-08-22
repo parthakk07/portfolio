@@ -18,6 +18,8 @@ import lightBanner from "./assets/images/user_volcano_banner_1780960794028.png";
 import backupLightBanner from "./assets/images/regenerated_image_1780961340822.jpg";
 import profileAvatar from "./assets/images/user_avatar_1780960461329.png";
 import headerPortrait from "./assets/images/header-portrait.png";
+import animePortrait from "./assets/images/anime.jpeg";
+import spideyPortrait from "./assets/images/third-crop.jpeg";
 import cursorCloud from "./assets/images/cursor-cloud.png";
 
 const PixelGlobe = lazy(() => import("./components/PixelGlobe"));
@@ -33,7 +35,12 @@ export default function App() {
   // Safe Light Banner state with graceful fallback
   const [lightBannerSrc, setLightBannerSrc] = useState<string>(lightBanner);
 
-  // Avatar click counter for secret music popup
+  const headerFaces = [headerPortrait, animePortrait, spideyPortrait];
+  const [headerFace, setHeaderFace] = useState(0);
+
+  const cycleHeaderFace = () => {
+    setHeaderFace((i) => (i + 1) % headerFaces.length);
+  };
   const [clickCount, setClickCount] = useState(0);
   const [showMusicPopup, setShowMusicPopup] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -218,16 +225,19 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
             />
             <div className="absolute inset-0 bg-black/15 pointer-events-none" />
           </div>
-          <div className="absolute -bottom-16 left-6 md:left-12">
-            <div
-              className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden p-1 shadow-xl transition-colors duration-300 ${isDarkMode ? "bg-black" : "bg-gray-50"}`}
+          <div className="absolute -bottom-16 left-2 md:left-4">
+            <button
+              type="button"
+              onClick={cycleHeaderFace}
+              className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden p-1 shadow-xl transition-colors duration-300 cursor-pointer ${isDarkMode ? "bg-black" : "bg-gray-50"}`}
+              title="click to swap the photo"
             >
               <img
-                src={headerPortrait}
+                src={headerFaces[headerFace]}
                 alt="Parthak Kumar"
                 className="w-full h-full object-cover rounded-full"
               />
-            </div>
+            </button>
           </div>
         </section>
 
