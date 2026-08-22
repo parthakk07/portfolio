@@ -150,44 +150,40 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
       freeUntil: 0,
     };
 
+    const scrollX = () => window.scrollX || window.pageXOffset;
+    const scrollY = () => window.scrollY || window.pageYOffset;
+    const ptrDoc = (e: PointerEvent) => ({
+      x: e.clientX + scrollX(),
+      y: e.clientY + scrollY(),
+    });
+
     const readArena = () => {
       const banner = document.getElementById("hero-banner");
       const homeBox = home.getBoundingClientRect();
       const b = banner ? banner.getBoundingClientRect() : homeBox;
       const pad = 2;
       return {
-        minX: b.left + body.r + pad,
-        maxX: b.right - body.r - pad,
-        minY: b.top + body.r + pad,
-        maxY: window.innerHeight * 2,
-      };
-    };
-
-    const clampArena = (x: number, y: number) => {
-      const a = readArena();
-      const minX = Math.min(a.minX, a.maxX);
-      const maxX = Math.max(a.minX, a.maxX);
-      const minY = Math.min(a.minY, a.maxY);
-      const maxY = Math.max(a.minY, a.maxY);
-      return {
-        x: Math.min(maxX, Math.max(minX, x)),
-        y: Math.min(maxY, Math.max(minY, y)),
-        minX,
-        maxX,
-        minY,
-        maxY,
+        minX: b.left + scrollX() + body.r + pad,
+        maxX: b.right + scrollX() - body.r - pad,
+        minY: b.top + scrollY() + body.r + pad,
+        maxY: document.documentElement.scrollHeight - body.r - pad,
       };
     };
 
     const readHome = () => {
       const box = home.getBoundingClientRect();
       body.r = Math.max(box.width, box.height) / 2;
-      return { x: box.left + box.width / 2, y: box.top + box.height / 2, size: box.width };
+      return {
+        x: box.left + scrollX() + box.width / 2,
+        y: box.top + scrollY() + box.height / 2,
+        size: box.width,
+      };
     };
 
     const placeBall = (size: number, docked: boolean) => {
       fitRenderer(size);
       if (docked) {
+        if (ball.parentElement !== home) home.appendChild(ball);
         ball.style.position = "absolute";
         ball.style.left = "0";
         ball.style.top = "0";
@@ -196,7 +192,8 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
         ball.style.zIndex = "5";
         return;
       }
-      ball.style.position = "fixed";
+      if (ball.parentElement !== document.body) document.body.appendChild(ball);
+      ball.style.position = "absolute";
       ball.style.zIndex = "80";
       ball.style.width = `${size}px`;
       ball.style.height = `${size}px`;
@@ -252,7 +249,7 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
           body.x += body.vx * dt;
           body.y += body.vy * dt;
 
-          const a = clampArena(body.x, body.y);
+          const a = readArena();
           const rest = 0.38;
           if (body.x <= a.minX) {
             body.x = a.minX;
@@ -260,13 +257,12 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
           } else if (body.x >= a.maxX) {
             body.x = a.maxX;
             body.vx = -Math.abs(body.vx) * rest;
-          } else {
-            body.x = a.x;
           }
           if (body.y <= a.minY) {
             body.y = a.minY;
             body.vy = Math.abs(body.vy) * rest;
           }
+          // no bottom wall — throw can leave the screen, then it comes home
 
           const dx = h.x - body.x;
           const dy = h.y - body.y;
@@ -296,6 +292,8 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
 
     const onDown = (e: PointerEvent) => {
       e.preventDefault();
+      e.stopPropagation();
+      const p = ptrDoc(e);
       const h = readHome();
       if (body.settled) {
         body.x = h.x;
@@ -306,44 +304,44 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
       body.settled = false;
       body.vx = 0;
       body.vy = 0;
-      body.grabX = e.clientX - body.x;
-      body.grabY = e.clientY - body.y;
-      body.lastX = e.clientX;
-      body.lastY = e.clientY;
+      body.grabX = p.x - body.x;
+      body.grabY = p.y - body.y;
+      body.lastX = p.x;
+      body.lastY = p.y;
       body.lastT = performance.now();
       ball.style.cursor = "grabbing";
       placeBall(h.size, false);
-      ball.setPointerCapture(e.pointerId);
+      try {
+        ball.setPointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
     };
 
     const onMove = (e: PointerEvent) => {
       if (!body.held) return;
       const now = performance.now();
-      const dx = e.clientX - body.lastX;
-      const dy = e.clientY - body.lastY;
+      const p = ptrDoc(e);
+      const dx = p.x - body.lastX;
+      const dy = p.y - body.lastY;
       if (Math.hypot(dx, dy) > 3) body.moved = true;
       const dt = Math.max((now - body.lastT) / 1000, 1 / 120);
-      body.x = e.clientX - body.grabX;
-      body.y = e.clientY - body.grabY;
-      const a = clampArena(body.x, body.y);
-      body.x = a.x;
-      body.y = a.y;
+      body.x = p.x - body.grabX;
+      body.y = p.y - body.grabY;
+      const a = readArena();
+      body.x = Math.min(a.maxX, Math.max(a.minX, body.x));
+      body.y = Math.min(a.maxY, Math.max(a.minY, body.y));
       body.vx = dx / dt;
       body.vy = dy / dt;
-      body.lastX = e.clientX;
-      body.lastY = e.clientY;
+      body.lastX = p.x;
+      body.lastY = p.y;
       body.lastT = now;
     };
 
-    const onUp = (e: PointerEvent) => {
+    const finishThrow = () => {
       if (!body.held) return;
       body.held = false;
       ball.style.cursor = "grab";
-      try {
-        ball.releasePointerCapture(e.pointerId);
-      } catch {
-        /* already released */
-      }
       const cap = 1400;
       body.vx = Math.max(-cap, Math.min(cap, body.vx));
       body.vy = Math.max(-cap, Math.min(cap, body.vy));
@@ -356,10 +354,36 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
       }
     };
 
+    const onUp = (e: PointerEvent) => {
+      try {
+        ball.releasePointerCapture(e.pointerId);
+      } catch {
+        /* already released */
+      }
+      finishThrow();
+    };
+
+    // scroll/browser cancel must NOT drop the globe down the page
+    const onCancel = () => {
+      if (!body.held) return;
+      body.held = false;
+      body.vx = 0;
+      body.vy = 0;
+      ball.style.cursor = "grab";
+      body.freeUntil = performance.now();
+    };
+
+    const blockScroll = (e: Event) => {
+      if (!body.held) return;
+      e.preventDefault();
+    };
+
     ball.addEventListener("pointerdown", onDown);
     ball.addEventListener("pointermove", onMove);
     ball.addEventListener("pointerup", onUp);
-    ball.addEventListener("pointercancel", onUp);
+    ball.addEventListener("pointercancel", onCancel);
+    window.addEventListener("wheel", blockScroll, { passive: false });
+    window.addEventListener("touchmove", blockScroll, { passive: false });
     window.addEventListener("resize", snapHome);
 
     tick();
@@ -368,16 +392,19 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", snapHome);
+      window.removeEventListener("wheel", blockScroll);
+      window.removeEventListener("touchmove", blockScroll);
       ball.removeEventListener("pointerdown", onDown);
       ball.removeEventListener("pointermove", onMove);
       ball.removeEventListener("pointerup", onUp);
-      ball.removeEventListener("pointercancel", onUp);
+      ball.removeEventListener("pointercancel", onCancel);
       mesh.geometry.dispose();
       material.dispose();
       mapA.dispose();
       mapB.dispose();
       mapC.dispose();
       renderer.dispose();
+      if (ball.parentElement === document.body) home.appendChild(ball);
       if (canvas.parentNode === ball) ball.removeChild(canvas);
     };
   }, []);
