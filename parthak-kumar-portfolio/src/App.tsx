@@ -369,21 +369,21 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
                 description:
                   "Supervised ML model that flags employees likely to leave, using real HR features and a full train–test pipeline.",
                 href: "https://github.com/parthakk07/employee-churn-prediction",
-                image: "https://opengraph.githubassets.com/1/parthakk07/employee-churn-prediction",
+                image: "/projects/churn.png",
               },
               {
                 title: "Student Health Risk",
                 description:
                   "Predicts student health risk from lifestyle and academic signals with scikit-learn classifiers.",
                 href: "https://github.com/parthakk07/Predicting-Student-Health-Risk",
-                image: "https://opengraph.githubassets.com/1/parthakk07/Predicting-Student-Health-Risk",
+                image: "/projects/health.png",
               },
               {
                 title: "YouTube Summarizer",
                 description:
                   "Pulls a video transcript and writes a Gemini summary from a pasted YouTube URL.",
                 href: "https://github.com/parthakk07/YouTube-Video-Summarizer",
-                image: "https://opengraph.githubassets.com/1/parthakk07/YouTube-Video-Summarizer",
+                image: "/projects/summarizer.png",
               },
             ].map((project) => (
               <article key={project.title} className="flex flex-col">
