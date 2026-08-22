@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import profileFront from "../assets/images/user_avatar_1780960461329.png";
 import animeBack from "../assets/images/anime.jpeg";
+import thirdFace from "../assets/images/third-crop.jpeg";
 
 type PixelGlobeProps = {
   className?: string;
@@ -19,25 +20,49 @@ const VERTEX = `
 `;
 
 const FRAGMENT = `
-  uniform sampler2D uFront;
-  uniform sampler2D uBack;
+  uniform sampler2D uA;
+  uniform sampler2D uB;
+  uniform sampler2D uC;
   varying vec3 vObj;
   varying vec3 vWorldNormal;
 
-  vec2 coverUv(vec2 p) {
+  const float PI = 3.14159265;
+  const float TAU = 6.2831853;
+  const float TAU3 = 2.0943951;
+  const float HALF = 1.04719755;
+
+  float wrapPi(float a) {
+    return a - TAU * floor((a + PI) / TAU);
+  }
+
+  vec2 faceUv(float local, float ny) {
+    vec2 p = vec2(local * 0.72, (ny + 0.16) * 0.72);
     return clamp(p * 0.5 + 0.5, 0.0, 1.0);
   }
 
   void main() {
     vec3 n = normalize(vObj);
-    vec4 front = texture2D(uFront, coverUv(n.xy));
-    vec4 back = texture2D(uBack, coverUv(vec2(-n.x, n.y)));
-    float mixW = smoothstep(-0.42, 0.42, n.z);
-    vec4 tex = mix(back, front, mixW);
+    float ang = atan(n.x, n.z);
+
+    float dA = abs(wrapPi(ang));
+    float dB = abs(wrapPi(ang - TAU3));
+    float dC = abs(wrapPi(ang + TAU3));
+
+    float edge = 0.18;
+    float wA = 1.0 - smoothstep(HALF - edge, HALF + edge, dA);
+    float wB = 1.0 - smoothstep(HALF - edge, HALF + edge, dB);
+    float wC = 1.0 - smoothstep(HALF - edge, HALF + edge, dC);
+    float s = max(wA + wB + wC, 1e-4);
+    wA /= s; wB /= s; wC /= s;
+
+    vec4 tA = texture2D(uA, faceUv(wrapPi(ang) / HALF, n.y));
+    vec4 tB = texture2D(uB, faceUv(wrapPi(ang - TAU3) / HALF, n.y));
+    vec4 tC = texture2D(uC, faceUv(wrapPi(ang + TAU3) / HALF, n.y));
+    vec4 tex = tA * wA + tB * wB + tC * wC;
 
     vec3 lightDir = normalize(vec3(0.45, 0.55, 1.0));
-    float lambert = 0.62 + 0.38 * max(dot(normalize(vWorldNormal), lightDir), 0.0);
-    float rim = pow(1.0 - max(dot(normalize(vWorldNormal), vec3(0.0, 0.0, 1.0)), 0.0), 2.2) * 0.16;
+    float lambert = 0.66 + 0.34 * max(dot(normalize(vWorldNormal), lightDir), 0.0);
+    float rim = pow(1.0 - max(dot(normalize(vWorldNormal), vec3(0.0, 0.0, 1.0)), 0.0), 2.2) * 0.12;
     vec3 color = tex.rgb * lambert + vec3(rim);
 
     gl_FragColor = vec4(color, 1.0);
@@ -85,9 +110,10 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
     camera.position.z = 3.05;
 
     const loader = new THREE.TextureLoader();
-    const frontMap = loader.load(profileFront);
-    const backMap = loader.load(animeBack);
-    for (const map of [frontMap, backMap]) {
+    const mapA = loader.load(profileFront);
+    const mapB = loader.load(animeBack);
+    const mapC = loader.load(thirdFace);
+    for (const map of [mapA, mapB, mapC]) {
       map.colorSpace = THREE.SRGBColorSpace;
       map.flipY = true;
       map.minFilter = THREE.LinearMipmapLinearFilter;
@@ -96,13 +122,14 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        uFront: { value: frontMap },
-        uBack: { value: backMap },
+        uA: { value: mapA },
+        uB: { value: mapB },
+        uC: { value: mapC },
       },
       vertexShader: VERTEX,
       fragmentShader: FRAGMENT,
     });
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), material);
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 48), material);
     scene.add(mesh);
 
     const spin = { y: 0.2, x: 0.08, vy: reduced ? 0 : 0.42 };
@@ -347,8 +374,9 @@ export default function PixelGlobe({ className = "", onTap }: PixelGlobeProps) {
       ball.removeEventListener("pointercancel", onUp);
       mesh.geometry.dispose();
       material.dispose();
-      frontMap.dispose();
-      backMap.dispose();
+      mapA.dispose();
+      mapB.dispose();
+      mapC.dispose();
       renderer.dispose();
       if (canvas.parentNode === ball) ball.removeChild(canvas);
     };
