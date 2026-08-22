@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Github,
@@ -10,14 +10,6 @@ import {
   Moon,
   Sun,
   ChevronUp,
-  Cpu,
-  Database,
-  Terminal,
-  Palette,
-  Code2,
-  GitBranch,
-  BarChart3,
-  Server,
 } from "lucide-react";
 
 // Image Imports
@@ -26,6 +18,8 @@ import lightBanner from "./assets/images/user_volcano_banner_1780960794028.png";
 import backupLightBanner from "./assets/images/regenerated_image_1780961340822.jpg";
 import profileAvatar from "./assets/images/user_avatar_1780960461329.png";
 import cursorCloud from "./assets/images/cursor-cloud.png";
+
+const PixelGlobe = lazy(() => import("./components/PixelGlobe"));
 
 export default function App() {
   // Dark/Light mode state (default to dark)
@@ -129,7 +123,7 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
     setParthakClicks(next);
     if (next >= 3) {
       setParthakClicks(0);
-      window.open("https://superlative-dango-baf2ea.netlify.app/", "_blank");
+      window.open("https://portfolio-nenj.onrender.com/", "_blank");
     }
   };
 
@@ -151,7 +145,7 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
     <div id="home" className={`min-h-screen font-sans transition-colors duration-500 selection:bg-neutral-800 selection:text-white ${isDarkMode ? "bg-black text-white" : "bg-gray-50 text-black"}`}>
       
       {/* HEADER NAVIGATION */}
-      <header className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "bg-black/80 border-b border-neutral-900" : "bg-white/80 border-b border-gray-200"}`}>
+      <header id="site-header" className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "bg-black/80 border-b border-neutral-900" : "bg-white/80 border-b border-gray-200"}`}>
         <div id="nav-container" className="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <div className="relative flex items-center">
             <button 
@@ -209,47 +203,34 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
       <main className="max-w-4xl mx-auto px-6 py-10">
         
         {/* BANNER SECTION */}
-        <section className="relative w-full rounded-2xl overflow-visible aspect-[21/9] md:aspect-[16/6] bg-neutral-900 shadow-2xl">
-          {/* Light Banner (Base Layer) */}
-          <motion.img 
-            src={lightBannerSrc}
-            alt="Volcano banner light mode" 
-            referrerPolicy="no-referrer"
-            className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-            initial={false}
-            animate={{ opacity: isDarkMode ? 0 : 1 }}
-            transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-            onError={() => {
-              setLightBannerSrc(backupLightBanner);
-            }}
-          />
+        <section id="hero-banner" className="relative w-full rounded-2xl overflow-visible aspect-[21/9] md:aspect-[16/6] bg-neutral-900 shadow-2xl">
+          <div className="absolute inset-0 rounded-2xl overflow-hidden">
+            <video
+              className="absolute inset-0 w-full h-full object-cover"
+              src="/header.mp4"
+              poster={isDarkMode ? darkBanner : lightBannerSrc}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
+            <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+          </div>
           
-          {/* Dark Banner (Overlying Layer) */}
-          <motion.img 
-            src={darkBanner}
-            alt="Volcano banner dark mode" 
-            referrerPolicy="no-referrer"
-            className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-            initial={false}
-            animate={{ opacity: isDarkMode ? 1 : 0 }}
-            transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-          />
-          
-          {/* Circular Overlapping Profile Avatar */}
-          <div className="absolute -bottom-16 left-6 md:left-12">
-            <motion.button 
-              onClick={handleAvatarClick}
-              className={`w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden p-1 shadow-xl transition-colors duration-300 cursor-pointer ${isDarkMode ? "bg-black" : "bg-gray-50"}`}
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          {/* Globe home slot — invisible so nothing is left behind when thrown */}
+          <div className="absolute -bottom-16 left-6 md:left-12 w-32 h-32 md:w-36 md:h-36">
+            <Suspense
+              fallback={
+                <img
+                  src={profileAvatar}
+                  alt="Parthak Kumar Portrait"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              }
             >
-              <img 
-                src={profileAvatar} 
-                alt="Parthak Kumar Portrait" 
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </motion.button>
+              <PixelGlobe onTap={handleAvatarClick} className="w-full h-full" />
+            </Suspense>
           </div>
         </section>
 
@@ -305,121 +286,133 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
           </motion.p>
         </section>
 
-        {/* STACK SECTION */}
-        <section id="skills" className="mt-20 pt-10 border-t border-dashed border-neutral-800 dark:border-neutral-900">
-          <div className="flex flex-col gap-2">
-            <h2 className="font-serif text-2xl tracking-wide font-medium">Stack I use</h2>
-            <p className={`text-md ${isDarkMode ? "text-neutral-400" : "text-gray-500"}`}>
-              Technologies I work with
-            </p>
-          </div>
+        {/* STACK SECTION — jagritgumber-style marquees */}
+        <section id="skills" className="mt-20 pt-10 border-t border-neutral-800/80">
+          <h2 className="font-serif text-[28px] sm:text-[34px] tracking-tight font-medium">
+            Technologies I've worked with
+          </h2>
+          <p className={`mt-2 mb-4 text-sm sm:text-[15px] ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}>
+            These've helped me through the highs and lows of my projects.
+          </p>
 
-          {/* Infinite Moving Tech Marquee */}
-          <div className="marquee-container relative w-full overflow-hidden mt-12 py-4 select-none">
-            <style>{`
-              @keyframes marquee {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-              }
-              .animate-marquee {
-                animation: marquee 25s linear infinite;
-              }
-              .marquee-container:hover .animate-marquee {
-                animation-play-state: paused;
-              }
-            `}</style>
-            
-            {/* Ambient side fade masks for nice editorial presentation */}
-            <div className={`absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none bg-gradient-to-r ${isDarkMode ? "from-black to-transparent" : "from-white to-transparent"}`} />
-            <div className={`absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 pointer-events-none bg-gradient-to-l ${isDarkMode ? "from-black to-transparent" : "from-white to-transparent"}`} />
-            
-            <div className="flex w-max animate-marquee gap-6 md:gap-8">
-              {/* First Set of tools */}
-              <div className="flex gap-6 md:gap-8">
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="Python" isDarkMode={isDarkMode} icon={<Terminal size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="C" isDarkMode={isDarkMode} icon={<Cpu size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="HTML" isDarkMode={isDarkMode} icon={<Code2 size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="CSS" isDarkMode={isDarkMode} icon={<Palette size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="Git GitHub" isDarkMode={isDarkMode} icon={<GitBranch size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="MySQL" isDarkMode={isDarkMode} icon={<Database size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="data visualization" isDarkMode={isDarkMode} icon={<BarChart3 size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="Linux" isDarkMode={isDarkMode} icon={<Server size={32} strokeWidth={1.5} />} />
-                </div>
-              </div>
-
-              {/* Second Set of tools for perfect loop wrapping */}
-              <div className="flex gap-6 md:gap-8" aria-hidden="true">
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="Python" isDarkMode={isDarkMode} icon={<Terminal size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="C" isDarkMode={isDarkMode} icon={<Cpu size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="HTML" isDarkMode={isDarkMode} icon={<Code2 size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="CSS" isDarkMode={isDarkMode} icon={<Palette size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="Git GitHub" isDarkMode={isDarkMode} icon={<GitBranch size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="MySQL" isDarkMode={isDarkMode} icon={<Database size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="data visualization" isDarkMode={isDarkMode} icon={<BarChart3 size={32} strokeWidth={1.5} />} />
-                </div>
-                <div className="w-28 sm:w-32 flex-shrink-0">
-                  <TechCard name="Linux" isDarkMode={isDarkMode} icon={<Server size={32} strokeWidth={1.5} />} />
-                </div>
-              </div>
-            </div>
+          <div
+            className="skill-marquee-group flex flex-col overflow-hidden py-2 max-w-full"
+            style={{
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent, #000 6%, #000 94%, transparent)",
+              maskImage:
+                "linear-gradient(to right, transparent, #000 6%, #000 94%, transparent)",
+            }}
+          >
+            <SkillMarquee
+              reverse={false}
+              isDarkMode={isDarkMode}
+              items={[
+                { name: "Python", icon: "python" },
+                { name: "C", icon: "c" },
+                { name: "C++", icon: "cpp" },
+                { name: "HTML", icon: "html" },
+                { name: "CSS", icon: "css" },
+              ]}
+            />
+            <SkillMarquee
+              reverse={true}
+              isDarkMode={isDarkMode}
+              items={[
+                { name: "pandas", icon: "pandas" },
+                { name: "NumPy", icon: "numpy" },
+                { name: "matplotlib", icon: "viz" },
+                { name: "seaborn", icon: "seaborn" },
+                { name: "scikit-learn", icon: "sklearn" },
+                { name: "EDA", icon: "eda" },
+              ]}
+            />
+            <SkillMarquee
+              reverse={false}
+              isDarkMode={isDarkMode}
+              items={[
+                { name: "Git", icon: "git" },
+                { name: "GitHub", icon: "github" },
+                { name: "MySQL", icon: "mysql" },
+                { name: "Linux", icon: "linux" },
+                { name: "data viz", icon: "viz" },
+              ]}
+            />
           </div>
         </section>
 
         {/* PROJECTS SECTION */}
-        <section id="projects" className="mt-24 pt-10 border-t border-dashed border-neutral-800 dark:border-neutral-900">
-          <h2 className="font-serif text-2xl tracking-wide font-medium uppercase text-left">projects</h2>
+        <section id="projects" className="mt-24 pt-10 border-t border-neutral-800/80">
+          <div className="flex items-end justify-between gap-4 mb-8">
+            <div>
+              <h2 className="font-serif text-[28px] sm:text-[34px] tracking-tight font-medium">
+                Some Cool Projects
+              </h2>
+              <p className={`mt-2 text-sm sm:text-[15px] ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}>
+                I've more cool things in store these are just a few
+              </p>
+            </div>
+            <a
+              href="https://github.com/parthakk07"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`text-sm shrink-0 hover:opacity-80 ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}
+            >
+              View more →
+            </a>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mt-12">
-            
-            {/* Box 1: Chat bot */}
-            <ProjectCard 
-              title="chat bot"
-              isDarkMode={isDarkMode}
-              description="An intelligent chatbot capable of answering questions, maintaining context, and assisting with everyday tasks using modern language models."
-            />
-
-            {/* Box 2: X bot */}
-            <ProjectCard 
-              title="x bot"
-              isDarkMode={isDarkMode}
-              description="An automated social media bot that schedules and posts content, reducing manual effort and maintaining consistent activity."
-            />
-
-            {/* Box 3: Weather app */}
-            <ProjectCard 
-              title="weather app"
-              isDarkMode={isDarkMode}
-              description="A responsive weather application that provides real-time weather information using public APIs."
-            />
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Employee Churn Prediction",
+                description:
+                  "Supervised ML model that flags employees likely to leave, using real HR features and a full train–test pipeline.",
+                href: "https://github.com/parthakk07/employee-churn-prediction",
+                image: "https://opengraph.githubassets.com/1/parthakk07/employee-churn-prediction",
+              },
+              {
+                title: "Student Health Risk",
+                description:
+                  "Predicts student health risk from lifestyle and academic signals with scikit-learn classifiers.",
+                href: "https://github.com/parthakk07/Predicting-Student-Health-Risk",
+                image: "https://opengraph.githubassets.com/1/parthakk07/Predicting-Student-Health-Risk",
+              },
+              {
+                title: "YouTube Summarizer",
+                description:
+                  "Pulls a video transcript and writes a Gemini summary from a pasted YouTube URL.",
+                href: "https://github.com/parthakk07/YouTube-Video-Summarizer",
+                image: "https://opengraph.githubassets.com/1/parthakk07/YouTube-Video-Summarizer",
+              },
+            ].map((project) => (
+              <article key={project.title} className="flex flex-col">
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block overflow-hidden rounded-md aspect-[16/10] bg-neutral-900"
+                >
+                  <img
+                    src={project.image}
+                    alt=""
+                    className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-300"
+                  />
+                </a>
+                <h3 className="font-serif text-xl mt-4 tracking-tight">{project.title}</h3>
+                <p className={`mt-2 text-sm leading-relaxed flex-1 ${isDarkMode ? "text-neutral-400" : "text-neutral-600"}`}>
+                  {project.description}
+                </p>
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 self-end inline-flex items-center rounded-full bg-teal-500/90 hover:bg-teal-400 text-black text-sm px-4 py-1.5 transition-colors"
+                >
+                  View More
+                </a>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -637,62 +630,141 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
   );
 }
 
-/* TECH CARD SUBCOMPONENT */
-interface TechCardProps {
-  name: string;
-  icon: React.ReactNode;
+function SkillMarquee({
+  items,
+  reverse,
+  isDarkMode,
+}: {
+  items: { name: string; icon: string }[];
+  reverse: boolean;
   isDarkMode: boolean;
-}
-
-function TechCard({ name, icon, isDarkMode }: TechCardProps) {
+}): React.ReactElement {
+  const half: { name: string; icon: string }[] = [];
+  while (half.length < 16) half.push(...items);
+  const loop = half.concat(half);
   return (
-    <motion.div 
-      className={`flex flex-col items-center justify-center p-4 rounded-xl text-center transition-all duration-300 h-24 ${
-        isDarkMode 
-          ? "bg-black text-zinc-500 hover:text-emerald-500" 
-          : "bg-transparent text-zinc-500 hover:text-emerald-600"
-      }`}
-      whileHover={{ y: -4 }}
-      transition={{ type: "spring", stiffness: 350, damping: 25 }}
-    >
-      <div className="mb-3">
-        {icon}
-      </div>
-      <span className="font-serif text-[10px] uppercase tracking-wider font-medium">
-        {name}
-      </span>
-    </motion.div>
-  );
-}
-
-/* PROJECT CARD SUBCOMPONENT */
-interface ProjectCardProps {
-  title: string;
-  description: string;
-  isDarkMode: boolean;
-}
-
-function ProjectCard({ title, description, isDarkMode }: ProjectCardProps) {
-  return (
-    <motion.div 
-      className={`flex flex-col p-6 sm:pt-8 sm:pb-6 sm:px-6 aspect-square justify-between border-2 border-dashed border-neutral-800 rounded-md select-none transition-all duration-300 dark:border-neutral-800 hover:scale-[1.02] ${
-        isDarkMode 
-          ? "hover:border-neutral-500 text-white" 
-          : "hover:border-gray-500 text-black bg-white"
-      }`}
-      whileHover={{ y: -4 }}
-    >
-      <div className="flex-1 flex items-center justify-center overflow-hidden">
-        <p className={`text-center font-serif text-xs sm:text-xs md:text-sm leading-relaxed max-w-xs line-clamp-6 ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}>
-          {description}
-        </p>
-      </div>
-      
-      <div className="pt-4 sm:pt-6 border-t border-dashed border-neutral-200 dark:border-neutral-850 flex flex-col items-center gap-1">
-        <span className="font-serif text-xs sm:text-sm md:text-base tracking-wider text-center uppercase font-medium">
-          {title}
+    <div className={`flex w-max ${reverse ? "skill-marquee-rev" : "skill-marquee"}`}>
+      {loop.map((skill, i) => (
+        <span
+          key={`${skill.name}-${i}`}
+          className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-sm whitespace-nowrap border ${
+            isDarkMode
+              ? "border-white/10 text-neutral-200 bg-black"
+              : "border-neutral-300 text-neutral-800 bg-white"
+          }`}
+        >
+          <SkillIcon name={skill.icon} />
+          {skill.name}
         </span>
-      </div>
-    </motion.div>
+      ))}
+    </div>
   );
+}
+
+function SkillIcon({ name }: { name: string }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: "0 0 24 24",
+    fill: "currentColor",
+    "aria-hidden": true,
+  } as const;
+
+  switch (name) {
+    case "python":
+      return (
+        <svg {...common}>
+          <path d="M12 2c-3.3 0-3 1.4-3 3.2V7h6.1c.6 0 1 .4 1 1v5.2c0 .8-.7 1.5-1.5 1.5H8.6C6.3 14.7 5 16 5 18.4V20c0 2.4 2 2.2 4.4 2.2h1.1V20c0-1.6 1.4-3 3-3h5.2c1.7 0 3.3-1.4 3.3-3.1V8.6C22 5.6 20.4 2 12 2zm-1.3 2.2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+          <path d="M12 22c3.3 0 3-1.4 3-3.2V17H8.9c-.6 0-1-.4-1-1V10.8c0-.8.7-1.5 1.5-1.5h5.9C17.7 9.3 19 8 19 5.6V4c0-2.4-2-2.2-4.4-2.2H13.5V4c0 1.6-1.4 3-3 3H5.3C3.6 7 2 8.4 2 10.1v5.3C2 18.4 3.6 22 12 22zm1.3-2.2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" opacity=".85" />
+        </svg>
+      );
+    case "c":
+      return (
+        <svg {...common}>
+          <path d="M12 2a10 10 0 1 0 .01 20.01A10 10 0 0 0 12 2zm1.7 13.8c-.5.8-1.4 1.3-2.5 1.3-1.8 0-3.1-1.5-3.1-3.6s1.3-3.6 3.1-3.6c1.1 0 2 .5 2.5 1.3l1.7-1.1C14.6 8.8 13.2 8 11.3 8 8.2 8 6 10.3 6 13.5S8.2 19 11.3 19c1.9 0 3.3-.8 4.1-2.1l-1.7-1.1z" />
+        </svg>
+      );
+    case "html":
+      return (
+        <svg {...common}>
+          <path d="M3.5 2h17l-1.5 17.2L12 22l-7-2.8L3.5 2zm4 5.2-.2 2.4h7.6l-.3 2.8H7.5l-.2 2.3 4.7 1.4 4.6-1.4.3-3.5H9.2l.1-1.2h7.8l.4-4.3H7.5z" />
+        </svg>
+      );
+    case "css":
+      return (
+        <svg {...common}>
+          <path d="M3.5 2h17l-1.5 17.2L12 22l-7-2.8L3.5 2zm4.1 5.2h8.7l-.3 2.6H9.6l.2 1.8h5.8l-.5 4.8L12 17.2l-3.2-1-.2-2.3h2.1l.1 1.1 1.2.4 1.3-.4.2-2H8.6L7.6 7.2z" />
+        </svg>
+      );
+    case "git":
+      return (
+        <svg {...common}>
+          <path d="M21.6 11.1 12.9 2.4a1.4 1.4 0 0 0-2 0L9.2 4.1l2.5 2.5a1.7 1.7 0 0 1 2.1 2.1l2.4 2.4a1.7 1.7 0 1 1-1 1L13.1 10v6.1a1.7 1.7 0 1 1-1.4.1V9.8a1.7 1.7 0 0 1-.9-2.2L8.3 5.2 2.4 11a1.4 1.4 0 0 0 0 2l8.7 8.7a1.4 1.4 0 0 0 2 0l8.5-8.5a1.4 1.4 0 0 0 0-2z" />
+        </svg>
+      );
+    case "github":
+      return (
+        <svg {...common}>
+          <path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.9 9.6.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.4-3.4-1.4-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.4 9.4 0 0 1 5 0c2-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.7.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5A10.2 10.2 0 0 0 22 12.2C22 6.6 17.5 2 12 2z" />
+        </svg>
+      );
+    case "mysql":
+      return (
+        <svg {...common}>
+          <path d="M16.8 4.2c-.7 0-1.3.1-1.7.3-.2-1.3-1.4-2-1.4-2l-.4.5C12 4 11.4 5.2 11.3 6.2 10 7.1 8.2 8.6 7.5 10c-2.3 4.4.4 7.4 1.6 8.3-.3.8-.6 1.5-.6 1.5l.9.4s.4-.8.8-1.6c.6.2 1.4.4 2.4.4 3.7 0 6.3-2.3 6.3-6.2 0-2.6-1.3-4.6-3.1-6.2.2-.6.4-1.3.4-1.8 0-.3 0-.5-.1-.6zm-3.3 2.1c.2.6.3 1.2.3 1.6 0 .3 0 .5-.1.6-.4-.3-.8-.5-1.2-.8.2-.6.6-1.1 1-1.4z" />
+        </svg>
+      );
+    case "linux":
+      return (
+        <svg {...common}>
+          <path d="M12.1 2.2c-.8 0-2.3 2.1-2.5 5.1-.1.8-.3 1.6-.6 2.2-.6-1-1-2.3-1-3.3 0-1.3.3-2.2.3-2.2S6.5 5.6 6.5 8.9c0 1.7.6 3.2 1.4 4.5-.6.9-1 2-1 3.2 0 3.2 2.3 5.2 5.2 5.2s5.2-2 5.2-5.2c0-1.2-.4-2.3-1-3.2.8-1.3 1.4-2.8 1.4-4.5 0-3.3-1.8-4.9-1.8-4.9s.3.9.3 2.2c0 1-.4 2.3-1 3.3-.3-.6-.5-1.4-.6-2.2-.2-3-1.7-5.1-2.5-5.1z" />
+        </svg>
+      );
+    case "cpp":
+      return (
+        <svg {...common}>
+          <path d="M12 2a10 10 0 1 0 .01 20.01A10 10 0 0 0 12 2zm.2 13.7c-.5.8-1.3 1.2-2.4 1.2-1.8 0-3-1.5-3-3.6s1.2-3.6 3-3.6c1 0 1.8.4 2.3 1.2l1.6-1.1C13 8.7 11.7 8 10 8 7 8 5 10.3 5 13.3S7 18.6 10 18.6c1.8 0 3.1-.8 3.8-2.1l-1.6-1z" />
+          <path d="M16.2 11.2h1.2v1.2H19v1.2h-1.6v1.2h-1.2v-1.2h-1.6v-1.2h1.6zm3.6 0H21v1.2h1.6v1.2H21v1.2h-1.2v-1.2h-1.6v-1.2h1.6z" />
+        </svg>
+      );
+    case "pandas":
+      return (
+        <svg {...common}>
+          <path d="M8 3h2v18H8V3zm6 4h2v14h-2V7z" />
+        </svg>
+      );
+    case "numpy":
+      return (
+        <svg {...common}>
+          <path d="M4 4h4l8 12h4v4h-4L8 8H4V4zm12 0h4v8h-4V4zM4 12h4v8H4v-8z" />
+        </svg>
+      );
+    case "seaborn":
+      return (
+        <svg {...common}>
+          <path d="M4 18c2-6 4-8 6-8s3 3 5 3 3-5 5-7v12H4z" />
+        </svg>
+      );
+    case "sklearn":
+      return (
+        <svg {...common}>
+          <circle cx="8" cy="8" r="2.2" />
+          <circle cx="16" cy="8" r="2.2" />
+          <circle cx="8" cy="16" r="2.2" />
+          <circle cx="16" cy="16" r="2.2" />
+        </svg>
+      );
+    case "eda":
+      return (
+        <svg {...common}>
+          <path d="M4 18V8l4 3 4-6 4 6 4-3v10H4zm0 2h16v2H4v-2z" />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...common}>
+          <path d="M4 18V8l4 3 4-6 4 6 4-3v10H4zm0 2h16v2H4v-2z" />
+        </svg>
+      );
+  }
 }
