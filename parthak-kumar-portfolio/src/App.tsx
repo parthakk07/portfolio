@@ -160,16 +160,6 @@ export default function App() {
       >
         <img src={cursorCloud} alt="" className="w-20 sm:w-24" />
       </div>
-      <div
-        aria-hidden
-        className="pointer-events-none fixed left-0 right-0 bottom-0 top-20 z-[35]"
-      >
-        <div className="relative max-w-4xl mx-auto h-full">
-          <span className={`absolute left-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-800" : "bg-neutral-300"}`} />
-          <span className={`absolute right-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-800" : "bg-neutral-300"}`} />
-        </div>
-      </div>
-      
       {/* HEADER: full bar at top, himxnshu capsule after scroll */}
       <header
         id="site-header"
@@ -196,7 +186,7 @@ export default function App() {
               onClick={() => { handleScrollTo("home"); handleParthakClick(); }}
               className={`font-serif cursor-pointer transition-all duration-500 ease-out ${
                 navCompact
-                  ? "text-base sm:text-lg font-medium tracking-wide hover:opacity-80 hover:underline"
+                  ? "text-base sm:text-lg font-medium tracking-wide hover:opacity-80"
                   : "text-base sm:text-xl font-bold tracking-widest uppercase hover:opacity-80 translate-y-[5px]"
               }`}
             >
@@ -211,7 +201,7 @@ export default function App() {
                 onClick={() => handleScrollTo(id)}
                 className={`cursor-pointer transition-opacity duration-200 ${
                   navCompact
-                    ? "opacity-60 hover:opacity-100 hover:underline"
+                    ? "opacity-60 hover:opacity-100"
                     : "hover:opacity-70"
                 }`}
               >
@@ -396,62 +386,45 @@ export default function App() {
             </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className={`flex flex-col divide-y ${isDarkMode ? "divide-neutral-800/80" : "divide-neutral-300"}`}>
             {[
               {
                 title: "Delhi Next-Day AQI",
-                description:
-                  "Time-split CPCB PM2.5 class for tomorrow from today’s Delhi air and weather. Persistence beat the models — that’s the result.",
+                description: "Next-day PM2.5 class from Delhi air and weather.",
                 href: "https://github.com/parthakk07/delhi-aqi-classifier",
-                image: "/projects/aqi.png",
               },
               {
                 title: "Employee Churn Prediction",
-                description:
-                  "Supervised ML model that flags employees likely to leave, using real HR features and a full train–test pipeline.",
+                description: "Flags employees likely to leave from HR features.",
                 href: "https://github.com/parthakk07/employee-churn-prediction",
-                image: "/projects/churn.png",
               },
               {
                 title: "YouTube Summarizer",
-                description:
-                  "Pulls a video transcript and writes a Gemini summary from a pasted YouTube URL.",
+                description: "Transcript + Gemini summary from a YouTube URL.",
                 href: "https://github.com/parthakk07/YouTube-Video-Summarizer",
-                image: "/projects/summarizer.png",
               },
             ].map((project) => (
-              <article key={project.title} className="flex flex-col">
-                <a
-                  href={project.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block overflow-hidden rounded-md aspect-[16/10] bg-neutral-900"
-                >
-                  <img
-                    src={project.image}
-                    alt=""
-                    className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-300"
-                  />
-                </a>
-                <h3 className="font-serif text-xl mt-4 tracking-tight">{project.title}</h3>
-                <p className={`mt-2 text-sm leading-relaxed flex-1 ${isDarkMode ? "text-neutral-400" : "text-neutral-600"}`}>
-                  {project.description}
-                </p>
-                <a
-                  href={project.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 self-end inline-flex items-center rounded-full bg-teal-500/90 hover:bg-teal-400 text-black text-sm px-4 py-1.5 transition-colors"
-                >
-                  View More
-                </a>
-              </article>
+              <a
+                key={project.title}
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-4 py-3 hover:opacity-80 transition-opacity"
+              >
+                <div className="min-w-0 flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-3">
+                  <h3 className="font-serif text-lg sm:text-xl tracking-tight shrink-0">{project.title}</h3>
+                  <p className={`text-sm truncate ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}>
+                    {project.description}
+                  </p>
+                </div>
+                <span className="shrink-0 text-sm text-teal-400">View More →</span>
+              </a>
             ))}
           </div>
         </section>
 
         {/* EDUCATION SECTION */}
-        <section id="education" className="mt-24 pt-10 border-t border-dashed border-neutral-800 dark:border-neutral-900">
+        <section id="education" className="mt-24 pt-10 border-t border-neutral-800/80">
           <h2 className="font-serif text-2xl tracking-wide font-medium uppercase">education</h2>
 
           <div className="flex flex-col gap-8 mt-12">
@@ -495,7 +468,7 @@ export default function App() {
               </div>
               <div className="sm:text-right flex-shrink-0">
                 <span className={`font-mono text-xs px-3 py-1 rounded-full border ${isDarkMode ? "bg-neutral-950 border-neutral-800 text-neutral-400" : "bg-neutral-50 border-neutral-200 text-neutral-600"}`}>
-                  2023 — 2025
+                  2024 — 2025
                 </span>
               </div>
             </motion.div>
@@ -504,24 +477,15 @@ export default function App() {
         </section>
 
         {/* ABOUT ME SECTION */}
-        <section id="about" className="mt-24 pt-10 border-t border-dashed border-neutral-800 dark:border-neutral-900">
+        <section id="about" className="mt-16 pt-8 border-t border-neutral-800/80">
           <h2 className="font-serif text-2xl tracking-wide font-medium uppercase text-left">about me</h2>
-          
-          <motion.div 
-            className="mt-10"
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <p className={`font-serif text-base sm:text-lg leading-relaxed text-left ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}>
-              I'm a first-year BTech student passionate about AI, Machine Learning, and software development. I enjoy building automation tools, experimenting with APIs, and creating projects that make everyday tasks simpler. Currently exploring LLMs, cloud technologies, and full-stack development while continuously learning and sharing my journey.
-            </p>
-          </motion.div>
+          <p className={`mt-4 font-serif text-base sm:text-lg leading-relaxed text-left ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}>
+            I'm a first-year BTech student passionate about AI, Machine Learning, and software development. I enjoy building automation tools, experimenting with APIs, and creating projects that make everyday tasks simpler. Currently exploring LLMs, cloud technologies, and full-stack development while continuously learning and sharing my journey.
+          </p>
         </section>
 
         {/* CONTACT / FOOTER SECTION */}
-        <section id="contact" className="mt-28 py-12 border-t border-dashed border-neutral-800 dark:border-neutral-900">
+        <section id="contact" className="mt-16 py-12 border-t border-neutral-800/80">
           <div className="flex items-center justify-between gap-6">
             <div className="flex flex-col gap-2 min-w-0">
               <h3 className="font-serif text-lg text-neutral-400">Let's connect & get in touch!</h3>

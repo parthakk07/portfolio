@@ -1,11 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: "JetBrainsMono Nerd Font";
+  src: url("./assets/fonts/JetBrainsMonoNerdFont-ExtraLightItalic.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrainsMono Nerd Font";
+  src: url("./assets/fonts/JetBrainsMonoNerdFont-ExtraLightItalic.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 @theme {
-  --font-serif: "Cinzel", Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-  
+  --font-serif: "JetBrainsMono Nerd Font", ui-monospace, monospace;
+  --font-sans: "JetBrainsMono Nerd Font", ui-monospace, monospace;
+  --font-mono: "JetBrainsMono Nerd Font", ui-monospace, monospace;
+
   /* Additional customized theme attributes if needed */
   --color-brand-primary: #ffffff;
   --color-brand-accent: #f3f4f6;
@@ -38,6 +53,7 @@ html {
 /* Base style resets if any are necessary */
 body {
   font-family: var(--font-sans);
+  font-weight: 100;
   background-color: #000000;
   position: relative;
 }
@@ -71,4 +87,3 @@ body {
     animation: none;
   }
 }
-
