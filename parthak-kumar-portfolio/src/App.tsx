@@ -30,6 +30,7 @@ export default function App() {
   
   // Custom states
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+  const [navCompact, setNavCompact] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   
   // Safe Light Banner state with graceful fallback
@@ -77,11 +78,11 @@ export default function App() {
     };
 
     const animate = () => {
-cloudPos.current.x += (mousePos.current.x - cloudPos.current.x) * 0.015;
-cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
+      cloudPos.current.x += (mousePos.current.x - cloudPos.current.x) * 0.02;
+      cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.02;
 
       if (cloudRef.current) {
-        cloudRef.current.style.transform = `translate(${cloudPos.current.x - 30}px, ${cloudPos.current.y - 20}px)`;
+        cloudRef.current.style.transform = `translate3d(${cloudPos.current.x - 30}px, ${cloudPos.current.y - 20}px, 0)`;
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -96,12 +97,14 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
     };
   }, []);
 
-  // Handle scroll top visibility
+  // Scroll-top button + compact capsule nav after you leave the top
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
+      const y = window.scrollY;
+      setShowScrollTop(y > 400);
+      setNavCompact(y > 48);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -151,60 +154,77 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
 
   return (
     <div id="home" className={`relative min-h-screen font-sans transition-colors duration-500 selection:bg-neutral-800 selection:text-white ${isDarkMode ? "bg-black text-white" : "bg-gray-50 text-black"}`}>
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-[45]">
+      <div
+        ref={cloudRef}
+        className="pointer-events-none fixed left-0 top-0 z-50"
+      >
+        <img src={cursorCloud} alt="" className="w-20 sm:w-24" />
+      </div>
+      <div
+        aria-hidden
+        className="pointer-events-none fixed left-0 right-0 bottom-0 top-20 z-[35]"
+      >
         <div className="relative max-w-4xl mx-auto h-full">
-          <span className={`absolute left-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-600" : "bg-neutral-300"}`} />
-          <span className={`absolute right-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-600" : "bg-neutral-300"}`} />
+          <span className={`absolute left-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-800" : "bg-neutral-300"}`} />
+          <span className={`absolute right-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-800" : "bg-neutral-300"}`} />
         </div>
       </div>
       
-      {/* HEADER NAVIGATION */}
-      <header id="site-header" className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "bg-black/80 border-b border-neutral-900" : "bg-white/80 border-b border-gray-200"}`}>
-        <div id="nav-container" className="max-w-4xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      {/* HEADER: full bar at top, himxnshu capsule after scroll */}
+      <header
+        id="site-header"
+        className={`fixed top-0 left-0 right-0 z-40 transition-[background-color,backdrop-filter] duration-500 ease-out ${
+          navCompact
+            ? "bg-transparent"
+            : isDarkMode
+              ? "bg-black/80 backdrop-blur-md"
+              : "bg-white/80 backdrop-blur-md"
+        }`}
+      >
+        <div
+          id="nav-container"
+          className={`mx-auto flex items-center justify-between will-change-[height,margin,border-radius,background-color] transition-[height,margin,padding,border-radius,background-color,box-shadow,max-width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            navCompact
+              ? `max-w-4xl w-[calc(100%-2rem)] sm:w-full mt-3 mb-2 h-12 rounded-full px-5 backdrop-blur-xl ${
+                  isDarkMode ? "bg-black/45" : "bg-white/50"
+                }`
+              : "max-w-4xl px-4 sm:px-6 h-20 rounded-none bg-transparent"
+          }`}
+        >
           <div className="relative flex items-center">
             <button 
               onClick={() => { handleScrollTo("home"); handleParthakClick(); }}
-              className="font-serif text-base sm:text-xl font-bold tracking-widest hover:opacity-80 transition-opacity uppercase cursor-pointer flex items-center justify-center translate-y-[5px]"
+              className={`font-serif cursor-pointer transition-all duration-500 ease-out ${
+                navCompact
+                  ? "text-base sm:text-lg font-medium tracking-wide hover:opacity-80 hover:underline"
+                  : "text-base sm:text-xl font-bold tracking-widest uppercase hover:opacity-80 translate-y-[5px]"
+              }`}
             >
               PARTHAK
             </button>
-            <div
-              ref={cloudRef}
-              className="pointer-events-none fixed z-50"
-              style={{ left: 0, top: 0 }}
-            >
-              <img src={cursorCloud} alt="" className="w-20 sm:w-24" />
-            </div>
           </div>
 
-          <nav className="flex items-center gap-3 sm:gap-6 md:gap-8 font-serif text-xs sm:text-sm tracking-wide lowercase translate-y-[5px]">
-            <button 
-              onClick={() => handleScrollTo("home")} 
-              className="hover:opacity-70 transition-opacity cursor-pointer flex items-center justify-center"
-            >
-              Home
-            </button>
-            <button 
-              onClick={() => handleScrollTo("skills")} 
-              className="hover:opacity-70 transition-opacity cursor-pointer flex items-center justify-center"
-            >
-              skills
-            </button>
-            <button 
-              onClick={() => handleScrollTo("projects")} 
-              className="hover:opacity-70 transition-opacity cursor-pointer flex items-center justify-center"
-            >
-              projects
-            </button>
-            <button 
-              onClick={() => handleScrollTo("contact")}
-              className="hover:opacity-70 transition-opacity cursor-pointer flex items-center justify-center"
-            >
-              connect
-            </button>
+          <nav className={`flex items-center font-serif text-xs sm:text-sm tracking-wide lowercase ${navCompact ? "gap-3 sm:gap-5 md:gap-6" : "gap-3 sm:gap-6 md:gap-8 translate-y-[5px]"}`}>
+            {(["home", "skills", "projects", "contact"] as const).map((id) => (
+              <button
+                key={id}
+                onClick={() => handleScrollTo(id)}
+                className={`cursor-pointer transition-opacity duration-200 ${
+                  navCompact
+                    ? "opacity-60 hover:opacity-100 hover:underline"
+                    : "hover:opacity-70"
+                }`}
+              >
+                {id === "contact" ? "connect" : id === "home" ? "Home" : id}
+              </button>
+            ))}
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`p-1.5 sm:p-2 rounded-full cursor-pointer hover:scale-110 active:scale-95 transition-transform duration-300 flex items-center justify-center ${isDarkMode ? "bg-neutral-900 text-yellow-400" : "bg-gray-100 text-neutral-800"}`}
+              className={`rounded-full cursor-pointer hover:scale-105 active:scale-95 transition-all duration-500 ease-out flex items-center justify-center ${
+                navCompact
+                  ? `size-9 ${isDarkMode ? "bg-white/5 text-neutral-200" : "bg-black/5 text-neutral-800"}`
+                  : `p-1.5 sm:p-2 ${isDarkMode ? "bg-neutral-900 text-yellow-400" : "bg-gray-100 text-neutral-800"}`
+              }`}
               aria-label="Toggle theme"
             >
               {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
@@ -212,6 +232,7 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
           </nav>
         </div>
       </header>
+      <div className="h-20" aria-hidden />
 
       {/* MAIN CONTAINER */}
       <main className="max-w-4xl mx-auto px-6 py-10">
