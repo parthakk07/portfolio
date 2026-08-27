@@ -150,7 +150,13 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
   };
 
   return (
-    <div id="home" className={`min-h-screen font-sans transition-colors duration-500 selection:bg-neutral-800 selection:text-white ${isDarkMode ? "bg-black text-white" : "bg-gray-50 text-black"}`}>
+    <div id="home" className={`relative min-h-screen font-sans transition-colors duration-500 selection:bg-neutral-800 selection:text-white ${isDarkMode ? "bg-black text-white" : "bg-gray-50 text-black"}`}>
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-[45]">
+        <div className="relative max-w-4xl mx-auto h-full">
+          <span className={`absolute left-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-600" : "bg-neutral-300"}`} />
+          <span className={`absolute right-0 top-0 bottom-0 w-px ${isDarkMode ? "bg-neutral-600" : "bg-neutral-300"}`} />
+        </div>
+      </div>
       
       {/* HEADER NAVIGATION */}
       <header id="site-header" className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "bg-black/80 border-b border-neutral-900" : "bg-white/80 border-b border-gray-200"}`}>
