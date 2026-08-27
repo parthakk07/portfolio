@@ -372,18 +372,18 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
+                title: "Delhi Next-Day AQI",
+                description:
+                  "Time-split CPCB PM2.5 class for tomorrow from today’s Delhi air and weather. Persistence beat the models — that’s the result.",
+                href: "https://github.com/parthakk07/delhi-aqi-classifier",
+                image: "/projects/aqi.png",
+              },
+              {
                 title: "Employee Churn Prediction",
                 description:
                   "Supervised ML model that flags employees likely to leave, using real HR features and a full train–test pipeline.",
                 href: "https://github.com/parthakk07/employee-churn-prediction",
                 image: "/projects/churn.png",
-              },
-              {
-                title: "Student Health Risk",
-                description:
-                  "Predicts student health risk from lifestyle and academic signals with scikit-learn classifiers.",
-                href: "https://github.com/parthakk07/Predicting-Student-Health-Risk",
-                image: "/projects/health.png",
               },
               {
                 title: "YouTube Summarizer",
@@ -552,11 +552,9 @@ cloudPos.current.y += (mousePos.current.y - cloudPos.current.y) * 0.015;
             </button>
 
             <a 
-              href="#" 
-              onClick={(e) => {
-                e.preventDefault();
-                alert("Opening Resume mockup! This links directly to your PDF copy.");
-              }}
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className={`flex items-center gap-2 hover:opacity-70 transition-opacity ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}
             >
               <FileText size={14} /> resume
