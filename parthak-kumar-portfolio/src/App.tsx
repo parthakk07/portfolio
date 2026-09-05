@@ -186,15 +186,15 @@ export default function App() {
               onClick={() => { handleScrollTo("home"); handleParthakClick(); }}
               className={`font-serif cursor-pointer transition-all duration-500 ease-out ${
                 navCompact
-                  ? "text-base sm:text-lg font-medium tracking-wide hover:opacity-80"
-                  : "text-base sm:text-xl font-bold tracking-widest uppercase hover:opacity-80 translate-y-[5px]"
+                  ? "text-base sm:text-lg font-normal tracking-tight hover:opacity-80"
+                  : "text-base sm:text-xl font-normal tracking-normal uppercase hover:opacity-80 translate-y-[5px]"
               }`}
             >
               PARTHAK
             </button>
           </div>
 
-          <nav className={`flex items-center font-serif text-xs sm:text-sm tracking-wide lowercase ${navCompact ? "gap-3 sm:gap-5 md:gap-6" : "gap-3 sm:gap-6 md:gap-8 translate-y-[5px]"}`}>
+          <nav className={`flex items-center font-serif text-xs sm:text-sm tracking-normal lowercase ${navCompact ? "gap-2 sm:gap-4 md:gap-5" : "gap-3 sm:gap-5 md:gap-6 translate-y-[5px]"}`}>
             {(["home", "skills", "projects", "contact"] as const).map((id) => (
               <button
                 key={id}
@@ -262,7 +262,7 @@ export default function App() {
         <section className="mt-20 pt-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <motion.h1 
-              className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-wide font-medium leading-none text-white dark:text-white"
+              className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight font-normal leading-none text-white dark:text-white"
               style={{ color: isDarkMode ? "#ffffff" : "#111827" }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -299,7 +299,7 @@ export default function App() {
           </div>
 
           <motion.p 
-            className={`mt-4 font-serif text-md md:text-lg leading-relaxed ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}
+            className={`mt-2 font-serif text-md md:text-lg leading-snug ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}
             style={{ fontStyle: "italic" }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -311,8 +311,8 @@ export default function App() {
         </section>
 
         {/* STACK SECTION — jagritgumber-style marquees */}
-        <section id="skills" className="mt-20 pt-10 border-t border-neutral-800/80">
-          <h2 className="font-serif text-[28px] sm:text-[34px] tracking-tight font-medium">
+        <section id="skills" className="mt-8 pt-6 border-t border-neutral-800/80">
+          <h2 className="font-serif text-[28px] sm:text-[34px] tracking-tight font-normal">
             Technologies I've worked with
           </h2>
           <p className={`mt-2 mb-4 text-sm sm:text-[15px] ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}>
@@ -366,10 +366,10 @@ export default function App() {
         </section>
 
         {/* PROJECTS SECTION */}
-        <section id="projects" className="mt-24 pt-10 border-t border-neutral-800/80">
+        <section id="projects" className="mt-8 pt-6 border-t border-neutral-800/80">
           <div className="flex items-end justify-between gap-4 mb-8">
             <div>
-              <h2 className="font-serif text-[28px] sm:text-[34px] tracking-tight font-medium">
+              <h2 className="font-serif text-[28px] sm:text-[34px] tracking-tight font-normal">
                 Some Cool Projects
               </h2>
               <p className={`mt-2 text-sm sm:text-[15px] ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}>
@@ -424,10 +424,10 @@ export default function App() {
         </section>
 
         {/* EDUCATION SECTION */}
-        <section id="education" className="mt-24 pt-10 border-t border-neutral-800/80">
-          <h2 className="font-serif text-2xl tracking-wide font-medium uppercase">education</h2>
+        <section id="education" className="mt-12 pt-6 border-t border-neutral-800/80">
+          <h2 className="font-serif text-2xl tracking-tight font-normal uppercase">education</h2>
 
-          <div className="flex flex-col gap-8 mt-12">
+          <div className="flex flex-col gap-5 mt-6">
             
             <motion.div 
               className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 group"
@@ -477,19 +477,19 @@ export default function App() {
         </section>
 
         {/* ABOUT ME SECTION */}
-        <section id="about" className="mt-16 pt-8 border-t border-neutral-800/80">
-          <h2 className="font-serif text-2xl tracking-wide font-medium uppercase text-left">about me</h2>
-          <p className={`mt-4 font-serif text-base sm:text-lg leading-relaxed text-left ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}>
+        <section id="about" className="mt-12 pt-6 border-t border-neutral-800/80">
+          <h2 className="font-serif text-2xl tracking-tight font-normal uppercase text-left">about me</h2>
+          <p className={`mt-3 font-serif text-base sm:text-lg leading-snug text-left ${isDarkMode ? "text-neutral-300" : "text-gray-700"}`}>
             I'm a first-year BTech student passionate about AI, Machine Learning, and software development. I enjoy building automation tools, experimenting with APIs, and creating projects that make everyday tasks simpler. Currently exploring LLMs, cloud technologies, and full-stack development while continuously learning and sharing my journey.
           </p>
         </section>
 
         {/* CONTACT / FOOTER SECTION */}
-        <section id="contact" className="mt-16 py-12 border-t border-neutral-800/80">
+        <section id="contact" className="mt-12 pt-6 pb-10 border-t border-neutral-800/80">
           <div className="flex items-center justify-between gap-6">
             <div className="flex flex-col gap-2 min-w-0">
               <h3 className="font-serif text-lg text-neutral-400">Let's connect & get in touch!</h3>
-              <p className="font-serif text-xl tracking-wide dark:text-neutral-500 text-gray-500 font-medium">Find me on these platforms</p>
+              <p className="font-serif text-xl tracking-tight dark:text-neutral-500 text-gray-500 font-normal">Find me on these platforms</p>
             </div>
             <div className="relative w-32 h-32 md:w-36 md:h-36 shrink-0">
               <Suspense
@@ -506,7 +506,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 mt-8 font-serif text-xs tracking-wider lowercase">
+          <div className="flex flex-wrap items-center gap-5 mt-6 font-serif text-xs tracking-normal lowercase">
             <a 
               href="https://github.com/parthakk07" 
               target="_blank" 
